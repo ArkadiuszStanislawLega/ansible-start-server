@@ -1,38 +1,30 @@
-Role Name
+copy-ssh-key
 =========
 
-A brief description of the role goes here.
+We copy id_ed25519.pub to the server, because later any access to the server other than via ssh and already known hosts will be blocked.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+It is required to generate id_ed25519.pub for the user who will later remotely connect to the hosts. There is a tutorial for this, for example, on the github page.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+You should change the path to the generated public key, the variable, w katalogu ./vars/main.yml:
+~~~bash
+ssh_public_key_path
+~~~
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+~~~bash
+ansible-playbook -i hosts.yaml main_playbook.yaml --ask-become-pass --tags=copy-ssh-key
+~~~
 
 License
 -------
 
 BSD
 
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
