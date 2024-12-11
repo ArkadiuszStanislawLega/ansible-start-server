@@ -4,12 +4,6 @@
     src: templates/jail.local.j2
     dest: /etc/fail2ban/jail.local
 
-- name: Add nginx-http-auth filter
-  become: yes
-  ansible.builtin.template:
-    src: ./templates/nginx-http-auth.conf.j2
-    dest: /etc/fail2ban/filter.d/nginx-http-auth.conf
-
 - name: Add ngingx-badbots filter
   become: yes
   ansible.builtin.template:
