@@ -1,4 +1,4 @@
-Ansible Create Server
+Ansible Start Server
 =========
 
 This project allows you to set up a Django project web server on nginx and with a postgressql database. Additionally, it sets up basic ssh protocol and iptables security. Django, nginx and postgressql are set up in a different repository. Thanks to this repository, you can just throw an archived and prepared django project into the ./docker -project/files/app.tar role and wait until it finishes. This project allows you to set up a Django project web server on nginx and with a postgressql database. Additionally, it sets up basic ssh and iptables protocol security.
