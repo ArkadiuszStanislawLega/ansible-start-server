@@ -1,38 +1,37 @@
-Role Name
+add-rules-fail2ban
 =========
 
-A brief description of the role goes here.
+This role creates failn2ban rules for nginx to block:
+
+- nginx-badbots: Blocks access to bots and crawlers that try to access the site or perform attacks.
+- nginx-noscript: Prevents attempts to access hidden configuration or system files.
+
+Then it runs fail2ban.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+All requirements are installed in the install-dependencies role. If it was started before you started this role, you should install fail2ban on the host.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+In the templates file, change port = 2222 to the one we will use for ssh.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+You should run install-dependencies role beforehand.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+~~~bash
+ansible-playbook -i hosts.yaml main_playbook.yaml --ask-become-pass --tags=add-rules-fail2ban
+~~~
 
 License
 -------
 
 BSD
 
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
