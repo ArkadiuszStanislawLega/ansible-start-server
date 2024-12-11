@@ -1,15 +1,8 @@
 [ssh]
 enabled = true
-port = 1357
+port = 2222
 filter = sshd
 logpath = /var/log/auth.log
-maxretry = 3
-
-[nginx-http-auth]
-enabled = true
-port = http,https
-filter = nginx-http-auth
-logpath = /home/app/nginx/nginx_logs/*access.log
 maxretry = 3
 
 [nginx-badbots]
