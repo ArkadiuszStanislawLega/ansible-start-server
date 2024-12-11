@@ -1,0 +1,54 @@
+---
+- name: Create iptables script
+  become: yes
+  copy:
+    dest: /usr/local/bin/iptables.sh
+    content: |
+      #!bin/sh
+      sudo iptables -A INPUT -p udp --dport 53 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --dport 5432 -j ACCEPT
+
+      sudo iptables -A INPUT -p tcp --dport 1357 -j ACCEPT
+
+      sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+    mode: '0755'
+
+- name: Create systemd service for iptables 
+  become: yes
+  copy:
+    dest: /etc/systemd/system/iptables.service
+    content: |
+      [Unit]
+      Description=Run iptables rules
+      After=network.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/iptables.sh
+      ExecReload=/usr/local/bin/iptables.sh
+      RemainAfterExit=true
+
+      [Install]
+      WantedBy=multi-user.target
+    mode: '0644'
+
+- name: Enable run iptables service
+  become: yes
+  systemd:
+    name: iptables.service
+    enabled: true
+    state: started
+
+- name: Drop all other inbound traffic
+  become: yes
+  ansible.builtin.iptables:
+    chain: INPUT
+    jump: DROP
+    protocol: tcp
+  tags:
+    - drops_ports
+      
+# tasks file for set-iptables

@@ -1,0 +1,11 @@
+---
+- name: Restart SSH
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+
+- name: Save iptables
+  shell: "iptables-save > /etc/iptables/rules.v4"
+  args:
+    warn: false
+# handlers file for set-iptables

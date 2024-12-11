@@ -1,0 +1,31 @@
+---
+- name: Create server
+  hosts: target_server
+  become: yes
+  vars:
+    username: "username"
+  roles: 
+    - role: copy-ssh-key 
+      tags: ["copy-ssh-key"]
+
+    - role: install-dependencies
+      tags: ["install-dependencies"]
+
+    - role: install-docker
+      tags: ["install-docker"]
+
+    - role: docker-project
+      tags: ["docker-project"]
+
+    - role: set-ssh-settings
+      tags: ["set-ssh-settings"]
+
+    - role: set-iptables
+      tags: ["set-iptables"]
+
+    - role: add-rules-fail2ban
+      tags: ["add-rules-fail2ban"]
+
+    - role: configure-enviroment
+      tags: ["configure-enviroment"]
+...

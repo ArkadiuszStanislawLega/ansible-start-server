@@ -1,0 +1,12 @@
+---
+- name: Create vim config
+  ansible.builtin.file:
+    path: /home/{{ ansible_user }}/.vimrc
+    state: touch
+
+- name: Add vim settings
+  ansible.builtin.template:
+    src: templates/vimrc.j2
+    dest: /home/{{ ansible_user }}/.vimrc
+
+# tasks file for configure-enviroment

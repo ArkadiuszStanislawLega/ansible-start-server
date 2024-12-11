@@ -1,0 +1,106 @@
+---
+- name: Copy docker-compose project
+  ansible.builtin.copy:
+    src: ./files/app.tar
+    dest: /home/{{ ansible_user }}/
+    mode: 'u=rwx,g=wr,o=r'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  throttle: 1
+  tags:
+    - copy_docker_files
+
+- name: Unarchive django project
+  ansible.builtin.unarchive:
+    src: /home/{{ ansible_user }}/app.tar
+    dest: /home/{{ ansible_user }}
+    remote_src: yes
+  tags: 
+    - unarchive_django_project
+
+- name: Change group ownership of copied files
+  ansible.builtin.file:
+    path: /home/{{ ansible_user }}/app
+    recurse: yes
+    group: www-data
+  tags: 
+    - change_django_project_owner
+
+- name: Remove django project archive
+  ansible.builtin.file:
+    path: /home/{{ ansible_user }}/app.tar
+    state: absent
+  tags:
+    - remove_django_archive
+
+- name: Update virtual host address 
+  ansible.builtin.lineinfile:
+    path: /home/{{ ansible_user }}/app/app/.env
+    regexp: 'VIRTUAL_HOST'
+    line: "VIRTUAL_HOST={{ ansible_host }}"
+  tags:
+    - update_virtual_host
+
+- name: Update letsencrypt host
+  ansible.builtin.lineinfile:
+    path: /home/{{ ansible_user }}/app/app/.env
+    regexp: 'LETSENCRYPT_HOST'
+    line: "LETSENCRYPT_HOST={{ ansible_host }}"
+
+- name: Update django allowed hosts
+  ansible.builtin.lineinfile:
+    path: /home/{{ ansible_user }}/app/app/.env
+    regexp: 'DJANGO_ALLOWED_HOSTS'
+    line: "DJANGO_ALLOWED_HOSTS={{ ansible_host }},localhost"
+
+- name: Update csrf trusted origins
+  ansible.builtin.lineinfile:
+    path: /home/{{ ansible_user }}/app/app/.env
+    regexp: 'CSRF_TRUSTED_ORIGINS'
+    line: "CSRF_TRUSTED_ORIGINS=https://{{ ansible_host }},https://localhost"
+
+- name: Add user to docker group
+  become: yes
+  ansible.builtin.command:
+    cmd: "usermod -aG docker {{ ansible_user }}"
+  tags:
+    - add_user_to_group
+
+- name: Copy Docker Compose service file to systemd
+  ansible.builtin.template:
+    src: templates/docker-compose-app.service.j2
+    dest: /etc/systemd/system/docker-compose-app.service
+    mode: 'u=rwx,g=rx,o=rx'
+  vars:
+    project_directory: /home/{{ ansible_user }}/app
+  tags: 
+    - copy_service
+
+- name: Reload systemd to apply new service
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Run django project
+  ansible.builtin.command:
+    cmd: docker compose up -d --build
+    chdir: /home/{{ ansible_user }}/app
+
+- name: Collect statics
+  ansible.builtin.command: 
+    cmd: docker compose exec web python manage.py collectstatic --no-input
+    chdir: /home/{{ ansible_user}}/app
+  tags:
+    - collect_statics
+
+- name: Make migrations
+  ansible.builtin.command:
+    cmd: docker compose exec web python manage.py migrate
+    chdir: /home/{{ ansible_user }}/app
+  tags:
+    - make_migrations
+
+- name: Enable Docker Compose service to start on boot
+  ansible.builtin.systemd:
+    name: docker-compose-app.service
+    enabled: yes
+    state: started

@@ -1,0 +1,32 @@
+---
+- name: Create jail.local
+  ansible.builtin.template:
+    src: templates/jail.local.j2
+    dest: /etc/fail2ban/jail.local
+
+- name: Add nginx-http-auth filter
+  become: yes
+  ansible.builtin.template:
+    src: ./templates/nginx-http-auth.conf.j2
+    dest: /etc/fail2ban/filter.d/nginx-http-auth.conf
+
+- name: Add ngingx-badbots filter
+  become: yes
+  ansible.builtin.template:
+    src: ./templates/nginx-badbots.conf.j2
+    dest: /etc/fail2ban/filter.d/nginx-badbots.conf
+
+- name: Add nginx-noscript filter
+  become: yes
+  ansible.builtin.template:
+    src: ./templates/nginx-noscript.conf.j2
+    dest: /etc/fail2ban/filter.d/nginx-noscript.conf
+
+- name: Fial2ban enabled
+  become: yes
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true
+
+# tasks file for add-rules-fail2ban

@@ -1,0 +1,7 @@
+---
+- name: Copy administrator ssh-key to the host
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file', ssh_public_key_path)}}"
+    # tasks file for copy-ssh-key

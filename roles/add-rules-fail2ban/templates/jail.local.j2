@@ -1,0 +1,27 @@
+[ssh]
+enabled = true
+port = 1357
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+
+[nginx-http-auth]
+enabled = true
+port = http,https
+filter = nginx-http-auth
+logpath = /home/app/nginx/nginx_logs/*access.log
+maxretry = 3
+
+[nginx-badbots]
+enabled = true
+port = http,https
+filter = nginx-badbots
+logpath = /home/app/nginx/nginx_logs/*access.log
+maxretry = 2
+
+[nginx-noscript]
+enabled = true
+port = http,https
+filter = nginx-noscript
+logpath = /home/app/nginx/nginx_logs/*access.log
+maxretry = 2
