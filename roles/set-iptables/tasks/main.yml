@@ -11,7 +11,7 @@
       sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
       sudo iptables -A INPUT -p tcp --dport 5432 -j ACCEPT
 
-      sudo iptables -A INPUT -p tcp --dport 1357 -j ACCEPT
+      sudo iptables -A INPUT -p tcp --dport 2222 -j ACCEPT
 
       sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
     mode: '0755'
