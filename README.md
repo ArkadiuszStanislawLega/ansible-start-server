@@ -28,6 +28,14 @@ ansible-playbook -i hosts.yaml main-playbook.yaml --ask-become-pass --ask-vault-
 ansible-playbook -i hosts.yaml main-playbook.yaml --tags=docker-project
 ~~~
 
+Other links
+------------
+
+1. Creating a backup: <https://github.com/ArkadiuszStanislawLega/ansible-make-backup>
+2. Sending a backup: <https://github.com/ArkadiuszStanislawLega/ansible-push-backup>
+3. Server docker compose: <https://github.com/ArkadiuszStanislawLega/docker-django-web-server>
+
+
 License
 -------
 
